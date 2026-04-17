@@ -4,16 +4,19 @@
 
 .container {
   display: grid;
-  grid-template-rows: 100px calc(3 * var(--cell-side));
+  grid-template-columns: calc(3 * var(--cell-side) + 16px);
+  grid-template-rows: 100px calc(3 * var(--cell-side) + 16px);
   gap: 16px;
 
-  max-width: calc(3 * var(--cell-side));
+  background-color: #fff;
   padding: 16px;
 }
 
 #status {
-  font-size: 2rem;
+  align-self: center;
+
   text-align: center;
+  font-size: 2rem;
 }
 
 #board {
@@ -21,13 +24,18 @@
   grid-template-columns: repeat(3, var(--cell-side));
   grid-template-rows: repeat(3, var(--cell-side));
   gap: 8px;
-  
-  background-color: #000;
+
+  background-color: black;
   font-size: 8rem;
 }
 
 .cell {
   display: grid;
   place-items: center;
+  
   background-color: #fff;
+}
+
+#board.disabled > .cell {
+  background-color: #888;
 }

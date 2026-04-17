@@ -249,13 +249,23 @@ const displayController = (() => {
   }
 
   const clickCell = (event) => {
+    if (!gameStarted) {
+      return;
+    }
     const posX = event.target.dataset.column;
     const posY = event.target.dataset.row;
     gameController.playRound(posX, posY);
     updateDisplay();
   }
 
-  return { buildDisplay };
+  let gameStarted;
+
+  const flipStart = () => {
+    gameStarted = !gameStarted;
+    boardDisplay.classList.toggle('disabled');
+  }
+
+  return { buildDisplay, flipStart };
 })();
 
 displayController.buildDisplay();
