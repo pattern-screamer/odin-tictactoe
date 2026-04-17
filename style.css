@@ -4,12 +4,18 @@
 
 .container {
   display: grid;
+  grid-template-columns: calc(3 * var(--cell-side) + 16px) 400px;
+  gap: 16px;
+  padding: 16px;
+}
+
+.game-container {
+  display: grid;
   grid-template-columns: calc(3 * var(--cell-side) + 16px);
   grid-template-rows: 100px calc(3 * var(--cell-side) + 16px);
   gap: 16px;
 
   background-color: #fff;
-  padding: 16px;
 }
 
 #status {
@@ -32,10 +38,41 @@
 .cell {
   display: grid;
   place-items: center;
-  
+
   background-color: #fff;
 }
 
 #board.disabled > .cell {
   background-color: #888;
+}
+
+#start-restart {
+  padding: 0;
+  width: 200px;
+}
+
+.interaction-container {
+  display: grid;
+  grid-template-rows: 100px 30px 200px;
+  justify-items: center;
+  gap: 16px;
+  padding: 132px 0 0;
+}
+
+.player-names {
+  display: grid;
+  grid-template-columns: max-content 200px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+input:disabled {
+  background-color: #888;
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  text-align: center;
 }

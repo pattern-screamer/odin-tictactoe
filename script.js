@@ -211,14 +211,22 @@ const gameController = (() => {
     status = 'turn';
   }
 
-  return { playRound, getBoard, getStatus, setPlayerName, getPlayerColor, setPlayerColor }
+  const resetGame = () => {
+    gameBoard.build();
+    gameState = 0;
+    status = null;
+  }
+
+  return { playRound, getBoard, resetGame, getStatus, setPlayerName, getPlayerColor, setPlayerColor }
 })();
 
 const displayController = (() => {
   const boardDisplay = document.querySelector("div#board");
   const statusDisplay = document.querySelector("div#status");
+  const scoreDisplay = document.querySelector("div#score");
 
   const buildDisplay = () => {
+    boardDisplay.innerHTML = "";
     const board = gameController.getBoard();
     for (let row = 0; row < board.length; row++) {
       for (let column = 0; column < board[row].length; column++) {
@@ -244,7 +252,7 @@ const displayController = (() => {
       cell.textContent = board[column][row];
     }
 
-    const status = gameController.getStatus();
+    const status = gameController.getStatus(); 
     statusDisplay.textContent = status;
   }
 
@@ -262,10 +270,37 @@ const displayController = (() => {
 
   const flipStart = () => {
     gameStarted = !gameStarted;
+    if (gameStarted) {
+       gameController.playRound(0, 0);
+    }
     boardDisplay.classList.toggle('disabled');
   }
 
   return { buildDisplay, flipStart };
+})();
+
+const inputController = (() => {
+  const playerOneInput = document.querySelector('input#player-one');
+  const playerTwoInput = document.querySelector('input#player-two');
+  const startRestart = document.querySelector('button#start-restart');
+  
+  content = ['Start', 'Restart'];
+  const clickStartRestart = () => {
+    if (!playerOneInput.disabled && playerOneInput.value) {
+      gameController.setPlayerName(1, (playerOneInput.value));
+    }
+    if (!playerTwoInput.disabled && playerTwoInput.value) {
+      gameController.setPlayerName(2, (playerTwoInput.value));
+    }
+    playerOneInput.disabled = !playerOneInput.disabled
+    playerTwoInput.disabled = !playerTwoInput.disabled
+    startRestart.textContent = startRestart.textContent === content[0] ? content[1] : content[0];
+    gameController.resetGame();
+    displayController.flipStart();
+    displayController.buildDisplay();
+  }
+
+  startRestart.addEventListener("click", clickStartRestart);
 })();
 
 displayController.buildDisplay();
