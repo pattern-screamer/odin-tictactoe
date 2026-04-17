@@ -26,7 +26,10 @@ const gameBoard = (() => {
     for (let column = 0; column < columns; column++) {
       boardValues[column] = [];
       for (let row = 0; row < rows; row++) {
-        const cellValue = board[column][row].getValue();
+        let cellValue = "";
+        if (board) {
+          cellValue = board[column][row].getValue();
+        }
         boardValues[column].push(cellValue);
       }
     }
@@ -209,5 +212,5 @@ const gameController = (() => {
 })();
 
 const displayController = (() => {
-
+  console.log(gameController.getBoard());
 })();
