@@ -1,0 +1,33 @@
+:root {
+  --cell-side: 200px;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: 100px calc(3 * var(--cell-side));
+  gap: 16px;
+
+  max-width: calc(3 * var(--cell-side));
+  padding: 16px;
+}
+
+#status {
+  font-size: 2rem;
+  text-align: center;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-side));
+  grid-template-rows: repeat(3, var(--cell-side));
+  gap: 8px;
+  
+  background-color: #000;
+  font-size: 8rem;
+}
+
+.cell {
+  display: grid;
+  place-items: center;
+  background-color: #fff;
+}

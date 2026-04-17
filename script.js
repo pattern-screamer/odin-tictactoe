@@ -182,6 +182,9 @@ const gameController = (() => {
   }
 
   const getStatus = () => {
+    if (!status) {
+      return "Press Start to start game.";
+    }
     const playerName = activePlayer.getName();
     const playerToken = activePlayer.token;
     switch (status) {
@@ -212,5 +215,47 @@ const gameController = (() => {
 })();
 
 const displayController = (() => {
-  console.log(gameController.getBoard());
+  const boardDisplay = document.querySelector("div#board");
+  const statusDisplay = document.querySelector("div#status");
+
+  const buildDisplay = () => {
+    const board = gameController.getBoard();
+    for (let row = 0; row < board.length; row++) {
+      for (let column = 0; column < board[row].length; column++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.column = column;
+        cell.dataset.row = row;
+        cell.addEventListener("click", clickCell);
+        boardDisplay.appendChild(cell);
+      }
+    }
+
+    const status = gameController.getStatus();
+    statusDisplay.textContent = status;
+  }
+
+  const updateDisplay = () => {
+    const board = gameController.getBoard();
+    const cells = document.querySelectorAll('div.cell');
+    for (const cell of cells) {
+      column = cell.dataset.column;
+      row = cell.dataset.row;
+      cell.textContent = board[column][row];
+    }
+
+    const status = gameController.getStatus();
+    statusDisplay.textContent = status;
+  }
+
+  const clickCell = (event) => {
+    const posX = event.target.dataset.column;
+    const posY = event.target.dataset.row;
+    gameController.playRound(posX, posY);
+    updateDisplay();
+  }
+
+  return { buildDisplay };
 })();
+
+displayController.buildDisplay();
