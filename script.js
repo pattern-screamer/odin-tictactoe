@@ -8,7 +8,7 @@ const gameBoard = (() => {
     for (let column = 0; column < columns; column++) {
       board[column] = [];
       for (let row = 0; row < rows; row++) {
-        board[column].push(Cell());
+        board[column].push(new Cell());
       }
     }
   }
@@ -92,19 +92,15 @@ const gameBoard = (() => {
   return { build, update, getBoard, checkWin, checkTie };
 })();
 
-const Cell = () => {
-  let value = "";
-
-  const getValue = () => {
-    return value;
+class Cell {
+  #value = "";
+  getValue = () => {
+    return this.#value;
   }
-
-  const setValue = (token) => {
-    value = token;
+  setValue = (token) => {
+    this.#value = token;
   }
-
-  return { getValue, setValue }
-};
+}
 
 const Player = (id, token) => {
   let name = `Player ${id}`;
