@@ -1,34 +1,34 @@
-const gameBoard = (() => {
-  const columns = 3;
-  const rows = 3;
-  let board;
+class GameBoard {
+  #columns = 3;
+  #rows = 3;
+  #board;
 
-  const build = () => {
-    board = [];
-    for (let column = 0; column < columns; column++) {
-      board[column] = [];
-      for (let row = 0; row < rows; row++) {
-        board[column].push(new Cell());
+  build = () => {
+    this.#board = [];
+    for (let column = 0; column < this.#columns; column++) {
+      this.#board[column] = [];
+      for (let row = 0; row < this.#rows; row++) {
+        this.#board[column].push(new Cell());
       }
     }
   }
 
-  const update = (posX, posY, token) => {
-    if (board[posX][posY].getValue() === "") {
-      board[posX][posY].setValue(token);
+  update = (posX, posY, token) => {
+    if (this.#board[posX][posY].getValue() === "") {
+      this.#board[posX][posY].setValue(token);
       return true;
     }
     return false;
   }
 
-  const getBoard = () => {
+  getBoard = () => {
     const boardValues = [];
-    for (let column = 0; column < columns; column++) {
+    for (let column = 0; column < this.#columns; column++) {
       boardValues[column] = [];
-      for (let row = 0; row < rows; row++) {
+      for (let row = 0; row < this.#rows; row++) {
         let cellValue = "";
-        if (board) {
-          cellValue = board[column][row].getValue();
+        if (this.#board) {
+          cellValue = this.#board[column][row].getValue();
         }
         boardValues[column].push(cellValue);
       }
@@ -36,8 +36,8 @@ const gameBoard = (() => {
     return boardValues;
   }
 
-  const checkWin = () => {
-    const boardValues = gameBoard.getBoard();
+  checkWin = () => {
+    const boardValues = this.getBoard();
 
     //Horizontal and vertical three-in-a-row checks
     for (let i = 0; i < 3; i++) {
@@ -76,11 +76,11 @@ const gameBoard = (() => {
     return false;
   }
 
-  const checkTie = () => {
-    if (checkWin()) {
+  checkTie = () => {
+    if (this.checkWin()) {
       return false;
     }
-    const boardValuesReduced = gameBoard.getBoard().reduce((a, b) => a.concat(b));
+    const boardValuesReduced = this.getBoard().reduce((a, b) => a.concat(b));
     for (const value of boardValuesReduced) {
       if (!value) {
         return false;
@@ -88,9 +88,7 @@ const gameBoard = (() => {
     }
     return true;
   }
-
-  return { build, update, getBoard, checkWin, checkTie };
-})();
+}
 
 class Cell {
   #value = "";
@@ -102,124 +100,122 @@ class Cell {
   }
 }
 
-const Player = (id, token) => {
-  let name = `Player ${id}`;
-  let score = 0;
-  let color;
+class Player {
+  #name;
+  #score = 0;
+  #color;
+  id;
+  token;
 
-  const getName = () => {
-    return name;
+  constructor(id, token) {
+    this.id = id;
+    this.token = token;
+    this.#name = `Player ${id}`;
   }
 
-  const setName = (newName) => {
-    name = newName;
+  getName = () => {
+    return this.#name;
   }
 
-  const getScore = () => {
-    return score;
+  setName = (newName) => {
+    this.#name = newName;
   }
 
-  const incrementScore = () => {
-    score++;
+  getScore = () => {
+    return this.#score;
   }
 
-  const resetScore = () => {
-    score = 0;
+  incrementScore = () => {
+    this.#score++;
   }
 
-  const getColor = () => {
-    return color;
+  resetScore = () => {
+    this.#score = 0;
   }
 
-  const setColor = (hex) => {
-    color = hex;
+  getColor = () => {
+    return this.#color;
   }
 
-  return {
-    id,
-    token,
-    getName,
-    setName,
-    getScore,
-    incrementScore,
-    resetScore,
-    getColor,
-    setColor
-  };
+  setColor = (hex) => {
+    this.#color = hex;
+  }
 };
 
-const gameController = (() => {
-  const players = [
-    Player(1, "X"),
-    Player(2, "O")
+const gameBoard = new GameBoard();
+
+class GameController {
+  #players = [
+    new Player(1, "X"),
+    new Player(2, "O")
   ];
 
-  let activePlayer;
+  #activePlayer;
 
-  const switchPlayer = () => {
-    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  switchPlayer = () => {
+    this.#activePlayer = this.#activePlayer === this.#players[0] ? this.#players[1] : this.#players[0];
   }
 
-  const getPlayerName = (playerId) => {
-    return players[playerId - 1].getName();
+  getPlayerName = (playerId) => {
+    return this.#players[playerId - 1].getName();
   }
 
-  const setPlayerName = (playerId, newName) => {
-    players[playerId - 1].setName(newName);
+  setPlayerName = (playerId, newName) => {
+    this.#players[playerId - 1].setName(newName);
   }
 
-  const getPlayerScore = (playerId) => {
-    return players[playerId - 1].getScore();
+  getPlayerScore = (playerId) => {
+    return this.#players[playerId - 1].getScore();
   }
 
-  const getPlayerColor = (playerId) => {
-    return players[playerId - 1].getColor();
+  getPlayerColor = (playerId) => {
+    return this.#players[playerId - 1].getColor();
   }
 
-  const setPlayerColor = (playerId, newColor) => {
-    players[playerId - 1].setColor(newColor);
+  setPlayerColor = (playerId, newColor) => {
+    this.#players[playerId - 1].setColor(newColor);
   }
 
   /**
    * gameState: 0 (paused) | 1 (in progress)
    */
-  let gameState = 0;
+  #gameState = 0;
   /**
    * status: 'turn' | 'occupied' | 'win' | 'tie'
    */
-  let status;
+  #status;
 
-  const playRound = (posX, posY) => {
-    if (!gameState) {
-      buildGame();
-    } else if (!gameBoard.update(posX, posY, activePlayer.token)) {
-      status = 'occupied';
+  playRound = (posX, posY) => {
+    if (!this.#gameState) {
+      this.#buildGame();
+    } else if (!gameBoard.update(posX, posY, this.#activePlayer.token)) {
+      this.#status = 'occupied';
     } else {
       if (gameBoard.checkWin()) {
-        gameState = 0;
-        status = 'win';
-        for (const player in players) {
-          if (players[player].token === gameBoard.checkWin()) {
-            players[player].incrementScore();
+        this.#gameState = 0;
+        this.#status = 'win';
+        for (const player in this.#players) {
+          if (this.#players[player].token === gameBoard.checkWin()) {
+            this.#players[player].incrementScore();
           }
         }
       } else if (gameBoard.checkTie()) {
-        gameState = 0;
-        status = 'tie';
+        this.#gameState = 0;
+        this.#status = 'tie';
       } else {
-        switchPlayer();
-        status = 'turn';
+        this.switchPlayer();
+        this.#status = 'turn';
       }
     }
   }
 
-  const getStatus = () => {
-    if (!status) {
+  getStatus = () => {
+    if (!this.#status) {
       return "Press Start to start game.";
     }
-    const playerName = activePlayer.getName();
-    const playerToken = activePlayer.token;
-    switch (status) {
+    const playerName = this.#activePlayer.getName();
+    const playerToken = this.#activePlayer.token;
+    switch (this.#status) {
       case 'turn':
         return `${playerName}'s (${playerToken}) turn.`;
       case 'occupied':
@@ -231,48 +227,38 @@ const gameController = (() => {
     }
   }
 
-  const getBoard = () => {
-    board = gameBoard.getBoard();
+  getBoard = () => {
+    const board = gameBoard.getBoard();
     return board;
   }
 
-  const buildGame = () => {
+  #buildGame = () => {
     gameBoard.build();
-    gameState = 1;
-    activePlayer = players[0];
-    status = 'turn';
+    this.#gameState = 1;
+    this.#activePlayer = this.#players[0];
+    this.#status = 'turn';
   }
 
-  const resetGame = () => {
-    for (const player in players) {
-      players[player].resetScore();
+  resetGame = () => {
+    for (const player in this.#players) {
+      this.#players[player].resetScore();
     }
     gameBoard.build();
-    gameState = 0;
-    status = null;
+    this.#gameState = 0;
+    this.#status = null;
   }
+};
 
-  return {
-    playRound,
-    getBoard,
-    resetGame,
-    getStatus,
-    getPlayerName,
-    setPlayerName,
-    getPlayerScore,
-    getPlayerColor,
-    setPlayerColor
-  }
-})();
+const gameController = new GameController();
 
-const displayController = (() => {
-  const boardDisplay = document.querySelector("div#board");
-  const statusDisplay = document.querySelector("div#status");
-  const playerOneScore = document.querySelector("p#player-one-score");
-  const playerTwoScore = document.querySelector("p#player-two-score");
+class DisplayController {
+  #boardDisplay = document.querySelector("div#board");
+  #statusDisplay = document.querySelector("div#status");
+  #playerOneScore = document.querySelector("p#player-one-score");
+  #playerTwoScore = document.querySelector("p#player-two-score");
 
-  const buildDisplay = () => {
-    boardDisplay.innerHTML = "";
+  buildDisplay = () => {
+    this.#boardDisplay.innerHTML = "";
     const board = gameController.getBoard();
     for (let row = 0; row < board.length; row++) {
       for (let column = 0; column < board[row].length; column++) {
@@ -280,87 +266,92 @@ const displayController = (() => {
         cell.classList.add('cell');
         cell.dataset.column = column;
         cell.dataset.row = row;
-        cell.addEventListener("click", clickCell);
-        boardDisplay.appendChild(cell);
+        cell.addEventListener("click", this.#clickCell);
+        this.#boardDisplay.appendChild(cell);
       }
     }
 
     const status = gameController.getStatus();
-    statusDisplay.textContent = status;
-    playerOneScore.textContent = gameController.getPlayerScore(1);
-    playerTwoScore.textContent = gameController.getPlayerScore(2);
+    this.#statusDisplay.textContent = status;
+    this.#playerOneScore.textContent = gameController.getPlayerScore(1);
+    this.#playerTwoScore.textContent = gameController.getPlayerScore(2);
   }
 
-  const updateDisplay = () => {
+  #updateDisplay = () => {
     const board = gameController.getBoard();
     const cells = document.querySelectorAll('div.cell');
     for (const cell of cells) {
-      column = cell.dataset.column;
-      row = cell.dataset.row;
+      const column = cell.dataset.column;
+      const row = cell.dataset.row;
       cell.textContent = board[column][row];
     }
 
     const status = gameController.getStatus();
-    statusDisplay.textContent = status;
-    playerOneScore.textContent = gameController.getPlayerScore(1);
-    playerTwoScore.textContent = gameController.getPlayerScore(2);
+    this.#statusDisplay.textContent = status;
+    this.#playerOneScore.textContent = gameController.getPlayerScore(1);
+    this.#playerTwoScore.textContent = gameController.getPlayerScore(2);
   }
 
-  const clickCell = (event) => {
-    if (!gameStarted) {
+  #clickCell = (event) => {
+    if (!this.#gameStarted) {
       return;
     }
     const posX = event.target.dataset.column;
     const posY = event.target.dataset.row;
     gameController.playRound(posX, posY);
-    updateDisplay();
+    this.#updateDisplay();
   }
 
-  let gameStarted;
+  #gameStarted;
 
-  const flipStart = () => {
-    gameStarted = !gameStarted;
-    if (gameStarted) {
+  flipStart = () => {
+    this.#gameStarted = !this.#gameStarted;
+    if (this.#gameStarted) {
       gameController.playRound(0, 0);
     }
-    boardDisplay.classList.toggle('disabled');
+    this.#boardDisplay.classList.toggle('disabled');
+  }
+}
+
+class InputController {
+  #playerOneInput = document.querySelector('input#player-one');
+  #playerTwoInput = document.querySelector('input#player-two');
+  #startRestart = document.querySelector('button#start-restart');
+  #playerOneName = document.querySelector("p#player-one-name");
+  #playerTwoName = document.querySelector("p#player-two-name");
+
+  #content = ['Start', 'Restart'];
+
+  doTheThing() {
+    this.#startRestart.addEventListener("click", this.#clickStartRestart);
   }
 
-  return { buildDisplay, flipStart };
-})();
-
-const inputController = (() => {
-  const playerOneInput = document.querySelector('input#player-one');
-  const playerTwoInput = document.querySelector('input#player-two');
-  const startRestart = document.querySelector('button#start-restart');
-  const playerOneName = document.querySelector("p#player-one-name");
-  const playerTwoName = document.querySelector("p#player-two-name");
-
-  content = ['Start', 'Restart'];
-  const clickStartRestart = () => {
-    if (!playerOneInput.disabled && playerOneInput.value) {
-      gameController.setPlayerName(1, (playerOneInput.value));
-      playerOneName.textContent = gameController.getPlayerName(1);
-    } else if (!playerOneInput.value) {
+  #clickStartRestart = () => {
+    if (!this.#playerOneInput.disabled && this.#playerOneInput.value) {
+      gameController.setPlayerName(1, (this.#playerOneInput.value));
+      this.#playerOneName.textContent = gameController.getPlayerName(1);
+    } else if (!this.#playerOneInput.value) {
       gameController.setPlayerName(1, `Player 1`);
-      playerOneName.textContent = `Player 1`;
+      this.#playerOneName.textContent = `Player 1`;
     }
-    if (!playerTwoInput.disabled && playerTwoInput.value) {
-      gameController.setPlayerName(2, (playerTwoInput.value));
-      playerTwoName.textContent = gameController.getPlayerName(2);
-    } else if (!playerTwoInput.value) {
+    if (!this.#playerTwoInput.disabled && this.#playerTwoInput.value) {
+      gameController.setPlayerName(2, (this.#playerTwoInput.value));
+      this.#playerTwoName.textContent = gameController.getPlayerName(2);
+    } else if (!this.#playerTwoInput.value) {
       gameController.setPlayerName(2, `Player 2`);
-      playerTwoName.textContent = `Player 2`;
+      this.#playerTwoName.textContent = `Player 2`;
     }
-    playerOneInput.disabled = !playerOneInput.disabled
-    playerTwoInput.disabled = !playerTwoInput.disabled
-    startRestart.textContent = startRestart.textContent === content[0] ? content[1] : content[0];
+    this.#playerOneInput.disabled = !this.#playerOneInput.disabled
+    this.#playerTwoInput.disabled = !this.#playerTwoInput.disabled
+    this.#startRestart.textContent = this.#startRestart.textContent === this.#content[0] ? this.#content[1] : this.#content[0];
     gameController.resetGame();
     displayController.flipStart();
     displayController.buildDisplay();
   }
+}
 
-  startRestart.addEventListener("click", clickStartRestart);
-})();
+const displayController = new DisplayController();
+const inputController = new InputController();
+inputController.doTheThing();
 
 displayController.buildDisplay();
